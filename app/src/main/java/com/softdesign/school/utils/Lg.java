@@ -15,8 +15,8 @@ public class Lg {
 
     public static boolean shouldLog() {
 //      return BuildConfig.IS_LOGCAT_LOGGER_ENABLED;
-//        return true;
-      return false;
+        return true;
+//      return false;
     }
 
     /**
@@ -27,6 +27,7 @@ public class Lg {
      * @param tag   Метка лог сообщения
      * @param text  Текст лог сообщения
      */
+
     public static void log(int level, String tag, String text) {
         if (shouldLog()) {
             if (text.length() > LOGCAT_BUFFER_SIZE) {
