@@ -16,7 +16,6 @@ public class Lg {
     public static boolean shouldLog() {
 //      return BuildConfig.IS_LOGCAT_LOGGER_ENABLED;
         return true;
-//      return false;
     }
 
     /**
