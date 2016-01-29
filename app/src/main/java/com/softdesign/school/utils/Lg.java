@@ -6,12 +6,6 @@ public class Lg {
 
     private static final String PREFIX = "HTC ";
     public static final int LOGCAT_BUFFER_SIZE = 3000;
-    public static final int VERBOSE = 2;
-    public static final int DEBUG = 3;
-    public static final int INFO = 4;
-    public static final int WARN = 5;
-    public static final int ERROR = 6;
-    public static final int ASSERT = 7;
 
     public static boolean shouldLog() {
 //      return BuildConfig.IS_LOGCAT_LOGGER_ENABLED;
@@ -21,13 +15,12 @@ public class Lg {
     /**
      * <p>Выводит логи заданного уровня</p>
      *
-     * @param level Уровень логирования (Verbose = 2, debug = 3, info = 4,
-     *                                      warn = 5, error = 6, assert = 7)
+     * @param level Уровень логирования
      * @param tag   Метка лог сообщения
      * @param text  Текст лог сообщения
      */
 
-    public static void log(int level, String tag, String text) {
+    private static void wrap(int level, String tag, String text) {
         if (shouldLog()) {
             if (text.length() > LOGCAT_BUFFER_SIZE) {
                 String s = text;
@@ -41,5 +34,47 @@ public class Lg {
                 Log.println(level, PREFIX + tag, text);
             }
         }
+    }
+
+    /**
+     * Выводит лог на уровне вывода verbose
+     */
+    public static void v(String tag, String text) {
+        wrap(Log.VERBOSE, tag, text);
+    }
+
+    /**
+     * Выводит лог на уровне вывода warn
+     */
+    public static void w(String tag, String text) {
+        wrap(Log.WARN, tag, text);
+    }
+
+    /**
+     * Выводит лог на уровне вывода debug
+     */
+    public static void d(String tag, String text) {
+        wrap(Log.DEBUG, tag, text);
+    }
+
+    /**
+     * Выводит лог на уровне вывода assert
+     */
+    public static void a(String tag, String text) {
+        wrap(Log.ASSERT, tag, text);
+    }
+
+    /**
+     * Выводит лог на уровне вывода error
+     */
+    public static void e(String tag, String text) {
+        wrap(Log.ERROR, tag, text);
+    }
+
+    /**
+     * Выводит лог на уровне вывода info
+     */
+    public static void i(String tag, String text) {
+        wrap(Log.INFO, tag, text);
     }
 }
