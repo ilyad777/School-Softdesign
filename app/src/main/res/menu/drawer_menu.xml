@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/drawer_profile"
+        android:icon="@drawable/ic_person_24dp"
+        android:title="@string/drawer.profile"/>
+    <item
+        android:id="@+id/drawer_contacts"
+        android:icon="@drawable/ic_contacts_24dp"
+        android:title="@string/drawer.contacts"/>
+    <item
+        android:id="@+id/drawer_tasks"
+        android:icon="@drawable/ic_assignment_24dp"
+        android:title="@string/drawer_tasks"/>
+    <item
+        android:id="@+id/drawer_teem"
+        android:icon="@drawable/ic_group_24dp"
+        android:title="@string/drawer.teem"/>
+    <item
+        android:id="@+id/drawer_settings"
+        android:icon="@drawable/ic_settings_24dp"
+        android:title="@string/drawer.settings"/>
+
+</menu>

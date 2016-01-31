@@ -1,62 +1,56 @@
 package com.softdesign.school.ui.activities;
 
-import android.content.Context;
-import android.content.res.Resources;
-import android.content.res.TypedArray;
-import android.os.Build;
+
+import android.support.design.widget.NavigationView;
+import android.support.v4.app.Fragment;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.util.TypedValue;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
-import android.widget.Button;
-import android.widget.CheckBox;
+import android.widget.FrameLayout;
 import android.widget.Toast;
 
-
+import com.softdesign.school.ui.fragments.*;
 import com.softdesign.school.utils.*;
-
-import java.util.Set;
-
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener{
 
-    CheckBox mCheckBox;
-    Button mRed;
-    Button mGreen;
-    Button mBlue;
-    Toolbar mToolbar;
-
-    private int[] mColors;
-
-    private static final String COLORS_KEY = "colors";
+    private Toolbar mToolbar;
+    private NavigationView mNavigationView;
+    private DrawerLayout mNavigationDrawer;
+    private MenuItem mItem;
+    private Fragment mFragment;
+    private FrameLayout mFrameContainer;
     private static final String CHECKED_KEY = "checked";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Lg.log(Lg.ASSERT, getLocalClassName(), "++++++++++++++++++++++++++++++");
-        Lg.log(Lg.ASSERT, getLocalClassName(), "onCreate");
+        Lg.a(getLocalClassName(), "++++++++++++++++++++++++++++++");
+        Lg.a(getLocalClassName(), "onCreate");
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mCheckBox = (CheckBox)findViewById(R.id.checkBox);
-        mCheckBox.setOnClickListener(this);
-
-        mRed = (Button)findViewById(R.id.button);
-        mRed.setOnClickListener(this);
-        mGreen = (Button)findViewById(R.id.button2);
-        mGreen.setOnClickListener(this);
-        mBlue = (Button)findViewById(R.id.button3);
-        mBlue.setOnClickListener(this);
+        mNavigationDrawer = (DrawerLayout)findViewById(R.id.navigation_drawer);
+        mNavigationView = (NavigationView)findViewById(R.id.navigation_view);
 
         mToolbar = (Toolbar)findViewById(R.id.toolbar);
         setupToolbar();
-        mColors = new int[]{R.color.colorPrimaryDark, R.color.colorPrimary};
+
+        setupDrawer();
+        mFrameContainer = (FrameLayout)findViewById(R.id.main_frame_container);
+        if(savedInstanceState != null){
+
+        }else{
+            getSupportFragmentManager().beginTransaction().replace(R.id.main_frame_container,new ProfileFragment()).commit();
+            mItem = mNavigationView.getMenu().findItem(R.id.drawer_profile);
+            mItem.setChecked(true);
+        }
+
     }
 
     private void setupToolbar(){
@@ -68,102 +62,112 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
+    /**
+     * Устанавливает выделение выбранного пункта меню
+     * @param item пункт меню
+     */
+    private void checker(MenuItem item){
+        mItem.setChecked(false);
+        item.setChecked(true);
+        mItem = item;
+    }
+
+    private void setupDrawer(){
+        mNavigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.drawer_profile:
+                        mFragment = new ProfileFragment();
+                        checker(item);
+                        break;
+                    case R.id.drawer_contacts:
+                        mFragment = new ContactsFragment();
+                        checker(item);
+                        break;
+                    case R.id.drawer_tasks:
+                        mFragment = new TasksFragment();
+                        checker(item);
+                        break;
+                    case R.id.drawer_teem:
+                        mFragment = new TeemFragment();
+                        checker(item);
+                        break;
+                    case R.id.drawer_settings:
+                        mFragment = new SettingsFragment();
+                        checker(item);
+                        break;
+                }
+                if (mFragment != null) {
+                    getSupportFragmentManager().beginTransaction().replace(R.id.main_frame_container, mFragment).addToBackStack(null).commit();
+                }
+                mNavigationDrawer.closeDrawers();
+                return false;
+            }
+        });
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if(item.getItemId() == android.R.id.home){
             Toast.makeText(this, "menu", Toast.LENGTH_SHORT).show();
         }
+        mNavigationDrawer.openDrawer(GravityCompat.START);
         return super.onOptionsItemSelected(item);
     }
 
     public void onClick(View view){
-        switch (view.getId()){
-            case R.id.button:
-                mColors = new int[]{R.color.colorPrimaryDarkRed, R.color.colorPrimaryRed};
-                SetTheme(mColors);
-                Toast.makeText(this, "Red", Toast.LENGTH_SHORT).show();
-                break;
-            case R.id.button2:
-                mColors = new int[]{R.color.colorPrimaryDarkGreen, R.color.colorPrimaryGreen};
-                SetTheme(mColors);
-                Toast.makeText(this, "Green", Toast.LENGTH_SHORT).show();
-                break;
-            case R.id.button3:
-                mColors = new int[]{R.color.colorPrimaryDark, R.color.colorPrimary};
-                SetTheme(mColors);
-                Toast.makeText(this, "Blue", Toast.LENGTH_SHORT).show();
-                break;
-            case R.id.checkBox:
-                Toast.makeText(this, "Check", Toast.LENGTH_SHORT).show();
-                break;
-        }
-    }
 
-    /**
-     * Устанавливает цвет StatusBar'a и Toolbar'a,
-     *
-     * @param colors  Масссив цветов [StatusBar color, Toolbar color]
-     */
-
-    public void SetTheme(int[] colors){
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            Window window = getWindow();
-            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-            window.setStatusBarColor(getResources().getColor(colors[0]));
-        }
-
-        mToolbar.setBackgroundColor(getResources().getColor(colors[1]));
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        Lg.log(Lg.ASSERT, getLocalClassName(), "onStart");
+        Lg.a(getLocalClassName(), "onStart");
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        Lg.log(Lg.ASSERT, getLocalClassName(), "onResume");
+        Lg.a(getLocalClassName(), "onResume");
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        Lg.log(Lg.ASSERT, getLocalClassName(), "onPause");
+        Lg.a(getLocalClassName(), "onPause");
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        Lg.log(Lg.ASSERT, getLocalClassName(), "onStop");
+        Lg.a(getLocalClassName(), "onStop");
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        Lg.log(Lg.ASSERT, getLocalClassName(), "onDestroy");
+        Lg.a(getLocalClassName(), "onDestroy");
     }
 
     @Override
     protected void onRestart() {
         super.onRestart();
-        Lg.log(Lg.ASSERT, getLocalClassName(), "onRestart");
+        Lg.a(getLocalClassName(), "onRestart");
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putIntArray(COLORS_KEY, mColors);
-        outState.putBoolean(CHECKED_KEY, mCheckBox.isChecked());
-
+        Lg.a(getLocalClassName(), "onSave");
+        outState.putInt(CHECKED_KEY, mItem.getItemId());
     }
 
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
-        mColors = savedInstanceState.getIntArray(COLORS_KEY);
-        SetTheme(mColors);
-        mCheckBox.setChecked(savedInstanceState.getBoolean(CHECKED_KEY));
+        Lg.a(getLocalClassName(), "onRestore");
+        mItem = mNavigationView.getMenu().findItem(savedInstanceState.getInt(CHECKED_KEY));
+        mItem.setChecked(true);
     }
 }
