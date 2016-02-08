@@ -4,12 +4,12 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
 
-    <color name="colorPrimaryGreen">#68ec4a</color>
-    <color name="colorPrimaryDarkGreen">#46d933</color>
-    <color name="colorAccentGreen">#ffe940</color>
+    <color name="green">#68ec4a</color>
+    <color name="dark_green">#46d933</color>
+    <color name="yellow">#ffe940</color>
 
-    <color name="colorPrimaryRed">#ef2c3d</color>
-    <color name="colorPrimaryDarkRed">#e2111c</color>
-    <color name="colorAccentRed">#08e1ae</color>
+    <color name="red">#ef2c3d</color>
+    <color name="dark_red">#e2111c</color>
+    <color name="azure">#08e1ae</color>
 
 </resources>
