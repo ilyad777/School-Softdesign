@@ -7,8 +7,16 @@
     <string name="drawer.settings">Настройки</string>
     <string name="person_name">Дубровин Илья</string>
     <string name="person_email">ilyad777@gmail.com</string>
-
-<!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="person_rating">100</string>
+    <string name="label_mobile">Мобильный</string>
+    <string name="person_phone">+7 (905) 019-37-45</string>
+    <string name="label_email">E-mail</string>
+    <string name="person_vk">https://vk.com/ilyad777</string>
+    <string name="label_vk">Профиль в VK</string>
+    <string name="person_git">https://github.com/ilyad777/school-softdesign</string>
+    <string name="label_git">Репозиторий</string>
+    <string name="label_about">О себе</string>
+    <string name="person_about">Здесь будет информация о себе</string>
+    <string name="ff_regular">sans-serif</string>
+    <string name="ff_regular_medium">sans-serif-medium</string>
 </resources>

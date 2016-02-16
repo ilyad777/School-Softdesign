@@ -1,9 +1,13 @@
 package com.softdesign.school.ui.activities;
 
 
+import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
+import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -11,21 +15,29 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.FrameLayout;
 import android.widget.Toast;
 
 import com.softdesign.school.ui.fragments.*;
 import com.softdesign.school.utils.*;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener{
+import butterknife.Bind;
+import butterknife.ButterKnife;
 
-    private Toolbar mToolbar;
-    private NavigationView mNavigationView;
-    private DrawerLayout mNavigationDrawer;
-    private MenuItem mItem;
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+
     private Fragment mFragment;
-    private FrameLayout mFrameContainer;
-    private static final String CHECKED_KEY = "checked";
+    public AppBarLayout.LayoutParams params = null;
+
+    @Bind(R.id.toolbar)
+    Toolbar mToolbar;
+    @Bind(R.id.navigation_drawer)
+    DrawerLayout mNavigationDrawer;
+    @Bind(R.id.navigation_view)
+    NavigationView mNavigationView;
+    @Bind(R.id.appbar_layout)
+    AppBarLayout mAppBar;
+    @Bind(R.id.collapsing_toolbar)
+    CollapsingToolbarLayout mCollapsingToolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,72 +46,66 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        ButterKnife.bind(this);
 
-        mNavigationDrawer = (DrawerLayout)findViewById(R.id.navigation_drawer);
-        mNavigationView = (NavigationView)findViewById(R.id.navigation_view);
-
-        mToolbar = (Toolbar)findViewById(R.id.toolbar);
         setupToolbar();
-
         setupDrawer();
-        mFrameContainer = (FrameLayout)findViewById(R.id.main_frame_container);
-        if(savedInstanceState != null){
 
-        }else{
-            getSupportFragmentManager().beginTransaction().replace(R.id.main_frame_container,new ProfileFragment()).commit();
-            mItem = mNavigationView.getMenu().findItem(R.id.drawer_profile);
-            mItem.setChecked(true);
+        if (savedInstanceState != null) {
+        } else {
+            getSupportFragmentManager().beginTransaction().replace(R.id.main_frame_container, new ProfileFragment()).commit();
         }
 
     }
 
-    private void setupToolbar(){
+    private void setupToolbar() {
         setSupportActionBar(mToolbar);
         ActionBar actionBar = getSupportActionBar();
-        if(actionBar != null){
+        params = (AppBarLayout.LayoutParams) mCollapsingToolbar.getLayoutParams();
+        if (actionBar != null) {
             actionBar.setHomeAsUpIndicator(R.drawable.ic_menu_24dp);
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
     }
 
-    /**
-     * Устанавливает выделение выбранного пункта меню
-     * @param item пункт меню
-     */
-    private void checker(MenuItem item){
-        mItem.setChecked(false);
-        item.setChecked(true);
-        mItem = item;
+    public void setTitle(int title) {
+        mCollapsingToolbar.setTitle(getResources().getString(title));
     }
 
-    private void setupDrawer(){
+    /**
+     * Устанавливает выделение выбранного пункта меню
+     *
+     * @param id пункт меню
+     */
+
+    public void checker(int id) {
+        mNavigationView.getMenu().findItem(id).setChecked(true);
+    }
+
+    private void setupDrawer() {
         mNavigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.drawer_profile:
                         mFragment = new ProfileFragment();
-                        checker(item);
                         break;
                     case R.id.drawer_contacts:
                         mFragment = new ContactsFragment();
-                        checker(item);
                         break;
                     case R.id.drawer_tasks:
                         mFragment = new TasksFragment();
-                        checker(item);
                         break;
                     case R.id.drawer_teem:
                         mFragment = new TeemFragment();
-                        checker(item);
                         break;
                     case R.id.drawer_settings:
                         mFragment = new SettingsFragment();
-                        checker(item);
                         break;
                 }
                 if (mFragment != null) {
-                    getSupportFragmentManager().beginTransaction().replace(R.id.main_frame_container, mFragment).addToBackStack(null).commit();
+                    getSupportFragmentManager().beginTransaction().replace(R.id.main_frame_container,
+                            mFragment).addToBackStack(mFragment.getClass().getName()).commit();
                 }
                 mNavigationDrawer.closeDrawers();
                 return false;
@@ -107,17 +113,59 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         });
     }
 
+    public void lockAppBar(boolean collapse, String title) {
+
+        params = (AppBarLayout.LayoutParams) mCollapsingToolbar.getLayoutParams();
+        mCollapsingToolbar.setTitle(title);
+
+        if (collapse) {
+            AppBarLayout.OnOffsetChangedListener mListener = new AppBarLayout.OnOffsetChangedListener() {
+                @Override
+                public void onOffsetChanged(AppBarLayout mAppBar, int verticalOffset) {
+                    if (mCollapsingToolbar.getHeight() + verticalOffset <= ViewCompat.getMinimumHeight(mCollapsingToolbar) + getStatusBarHeight()) {
+                        mAppBar.removeOnOffsetChangedListener(this);
+                    }
+                }
+            };
+            mAppBar.addOnOffsetChangedListener(mListener);
+            mAppBar.setExpanded(false);
+        } else {
+            mAppBar.setExpanded(true);
+            params.setScrollFlags(AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL | AppBarLayout.LayoutParams.SCROLL_FLAG_EXIT_UNTIL_COLLAPSED);
+            mCollapsingToolbar.setLayoutParams(params);
+        }
+    }
+
+    public int getStatusBarHeight() {
+        int result = 0;
+        int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
+        if (resourceId > 0) {
+            result = getResources().getDimensionPixelSize(resourceId);
+        }
+        return result;
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if(item.getItemId() == android.R.id.home){
+        if (item.getItemId() == android.R.id.home) {
             Toast.makeText(this, "menu", Toast.LENGTH_SHORT).show();
         }
         mNavigationDrawer.openDrawer(GravityCompat.START);
         return super.onOptionsItemSelected(item);
     }
 
-    public void onClick(View view){
+    @Override
+    public void onBackPressed() {
+        Fragment findingFragment = (Fragment) getSupportFragmentManager().findFragmentById(R.id.main_frame_container);
 
+        if (findingFragment != null && findingFragment instanceof ProfileFragment) {
+            getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        }
+        super.onBackPressed();
+    }
+
+
+    public void onClick(View view) {
     }
 
     @Override
@@ -160,14 +208,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         Lg.a(getLocalClassName(), "onSave");
-        outState.putInt(CHECKED_KEY, mItem.getItemId());
     }
 
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         Lg.a(getLocalClassName(), "onRestore");
-        mItem = mNavigationView.getMenu().findItem(savedInstanceState.getInt(CHECKED_KEY));
-        mItem.setChecked(true);
     }
 }
