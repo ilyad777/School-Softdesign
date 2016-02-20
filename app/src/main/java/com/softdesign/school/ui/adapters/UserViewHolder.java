@@ -7,14 +7,18 @@ import android.widget.TextView;
 
 import com.softdesign.school.ui.activities.R;
 
-public class UserViewHolder extends RecyclerView.ViewHolder{
-    protected ImageView mAvatar;
-    protected TextView mUserName;
+import butterknife.Bind;
+import butterknife.ButterKnife;
+
+public class UserViewHolder extends RecyclerView.ViewHolder {
+    @Bind(R.id.user_avatar)
+    ImageView mAvatar;
+    @Bind(R.id.user_name)
+    TextView mUserName;
 
 
     public UserViewHolder(View itemView) {
         super(itemView);
-        mUserName = (TextView) itemView.findViewById(R.id.user_name);
-        mAvatar = (ImageView) itemView.findViewById(R.id.user_avatar);
+        ButterKnife.bind(this, itemView);
     }
 }
