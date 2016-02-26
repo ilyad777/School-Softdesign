@@ -15,6 +15,7 @@ import com.softdesign.school.ui.activities.MainActivity;
 import com.softdesign.school.ui.activities.R;
 
 import butterknife.Bind;
+import butterknife.ButterKnife;
 
 
 public class ProfileFragment extends Fragment {
@@ -27,6 +28,9 @@ public class ProfileFragment extends Fragment {
         View convertView = inflater.inflate(R.layout.fragment_profile, null);
         ((MainActivity)getActivity()).checker(R.id.drawer_profile);
         ((MainActivity)getActivity()).lockAppBar(false, getResources().getString(R.string.person_name));
+
+        ButterKnife.bind(this, getActivity());
+
         return convertView;
 
     }
@@ -34,12 +38,12 @@ public class ProfileFragment extends Fragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        FloatingActionButton mFloatingActionButton = (FloatingActionButton) getActivity().findViewById(R.id.fab);
-        CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) mFloatingActionButton.getLayoutParams();
+
+        CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) mActionButton.getLayoutParams();
         params.setAnchorId(R.id.appbar_layout);
         params.anchorGravity = Gravity.BOTTOM | Gravity.RIGHT;
-        mFloatingActionButton.setLayoutParams(params);
-        mFloatingActionButton.setImageResource(R.drawable.ic_mode_edit_24dp);
+        mActionButton.setLayoutParams(params);
+        mActionButton.setImageResource(R.drawable.ic_mode_edit_24dp);
 
 
     }

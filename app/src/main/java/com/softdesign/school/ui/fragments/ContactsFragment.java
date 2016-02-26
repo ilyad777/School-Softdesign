@@ -21,9 +21,13 @@ import com.softdesign.school.ui.adapters.RecycleUserAdapter;
 
 import java.util.ArrayList;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
+
 public class ContactsFragment extends Fragment {
     ArrayList<User> mUsers = new ArrayList<User>();
-
+    @Bind(R.id.fab)
+    FloatingActionButton mActionButton;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -32,6 +36,8 @@ public class ContactsFragment extends Fragment {
 
         ((MainActivity) getActivity()).checker(R.id.drawer_contacts);
         ((MainActivity) getActivity()).lockAppBar(true, getResources().getString(R.string.drawer_contacts));
+
+        ButterKnife.bind(this, getActivity());
 
         generateData();
 
@@ -49,13 +55,12 @@ public class ContactsFragment extends Fragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        FloatingActionButton mFloatingActionButton = (FloatingActionButton) getActivity().findViewById(R.id.fab);
-        CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) mFloatingActionButton.getLayoutParams();
+        CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) mActionButton.getLayoutParams();
         params.setAnchorId(R.id.main_frame_container);
         params.anchorGravity = Gravity.BOTTOM | Gravity.RIGHT;
-        mFloatingActionButton.setLayoutParams(params);
-        mFloatingActionButton.setImageResource(R.drawable.ic_add_24dp);
-        mFloatingActionButton.show();
+        mActionButton.setLayoutParams(params);
+        mActionButton.setImageResource(R.drawable.ic_add_24dp);
+        mActionButton.show();
     }
 
     private void generateData() {
